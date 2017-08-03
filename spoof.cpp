@@ -60,5 +60,4 @@ void Spoof::start(){
                 
 		}
         }
-	cout << endl <<"[*] End Packet Capture" << endl;
 }

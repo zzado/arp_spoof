@@ -6,12 +6,13 @@
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <netinet/tcp.h>
-#include "node.h"
 #include <string.h>
 #include <sys/ioctl.h>
 #include <net/if.h>
 #include <unistd.h>
 #include <netinet/in.h>
+
+#include "node.h"
 using namespace std;
 
 Node::Node(string iface_name, string addr){
@@ -110,8 +111,7 @@ void Node::get_mac(){
                 char buf2[30];
 		pcap_sendpacket(this->handle, packet, i);
 		if(pcap_next_ex( this->handle, &header, &recv_packet ) != 1)
-                        continue;
-                
+                        continue;                
 		if(count > 10){
 			cout << "[*] " << ip_addr_str << " doesn't response ARP"<< endl;
 			exit(0);
