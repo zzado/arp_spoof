@@ -1,18 +1,16 @@
 #Makefile
 CXXFLAGS="-std=c++11"
 
-all: send_arp
+all: arp_spoof
 
-send_arp: node.o main.o interface.o send_arp.o sniff.o
-	g++ -o send_arp node.o main.o interface.o send_arp.o sniff.o -lpcap -lpthread
+arp_spoof: node.o main.o send_arp.o spoof.o
+	g++ -o arp_spoof node.o main.o send_arp.o spoof.o -lpcap -lpthread
 
-main.o: interface.h node.h send_arp.h main.cpp
-
-interface.o: interface.h interface.cpp
+main.o: node.h send_arp.h main.cpp
 
 node.o: node.h node.cpp
 
-sniff.o: sniff.cpp sniff.h
+spoof.o: spoof.cpp spoof.h
 
 send_arp.o: send_arp.h node.h send_arp.cpp
 

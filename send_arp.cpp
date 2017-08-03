@@ -1,13 +1,12 @@
 #include <iostream>
 #include <string>
-#include "node.h"
 #include <pcap.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <thread>
-using namespace std;
 
+#include "node.h"
+using namespace std;
 
 void send_arp(Node *sender, Node *target){
 	extern int status;
@@ -19,17 +18,14 @@ void send_arp(Node *sender, Node *target){
                 exit(0);
         }
         
-	u_char packet[100];
-        int i=0;
-        u_char dest_mac[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };     // Broad cast
-        u_char sender_ip[] = { 0xd2, 0x5c, 0x8e, 0x01 };                // Myip
-        u_char target_mac[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-        u_char ether_type[] = { 0x08, 0x06 };           //ARP
-        u_char Hardware_Type[] = { 0x00,0x01 };         //ETHERNET
-        u_char Protocol_Type[] = { 0x08,0x00 };         //IP
-        u_char Hardware_Size[] = { 0x06 };
-        u_char Protocol_Size[] = { 0x04 };
-        u_char Opcode[] = { 0x00, 0x02 };                       //Reply
+	unsigned char packet[100];
+        unsigned int i=0;
+        u_char ether_type[] = { 0x08, 0x06 };           // ARP
+        u_char Hardware_Type[] = { 0x00,0x01 };         // ETHERNET
+        u_char Protocol_Type[] = { 0x08,0x00 };         
+        u_char Hardware_Size[] = { 0x06 };		// ETHERNET
+        u_char Protocol_Size[] = { 0x04 };		
+        u_char Opcode[] = { 0x00, 0x02 };               // ARP Reply
 
         memcpy(packet + i, sender->mac_addr, sizeof(sender->mac_addr));			//sender mac
         i += sizeof(sender->mac_addr);
@@ -57,9 +53,9 @@ void send_arp(Node *sender, Node *target){
         i += sizeof(sender->ip_addr);
 	
 	while(1) {
-		if(status == 1)
+		if(status == 0)
 			break;
-		pcap_sendpacket(handle, packet, 100);
+		pcap_sendpacket(handle, packet, i);
 		cout << "[*] Send "<< " ARP reply packet to " << sender->ip_addr_str << endl;
 		sleep(2);
 	}

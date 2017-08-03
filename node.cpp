@@ -1,7 +1,4 @@
 #include <iostream>
-#include <pcap.h>
-#include "interface.h"
-#include <string>
 #include <stdlib.h>
 #include <cstdint>
 #include <arpa/inet.h>
@@ -15,7 +12,6 @@
 #include <net/if.h>
 #include <unistd.h>
 #include <netinet/in.h>
-
 using namespace std;
 
 Node::Node(string iface_name, string addr){
@@ -30,7 +26,6 @@ Node::Node(string iface_name, string addr){
         strcpy(ifr.ifr_name, this->iface.c_str());
         ioctl(s, SIOCGIFHWADDR, &ifr);
 	memcpy(this->iface_mac_addr, ifr.ifr_hwaddr.sa_data, 6);        	
-///
 	close(s);
 // Get my interface's ip    	
 	pcap_if_t *alldevs;
@@ -54,6 +49,7 @@ Node::Node(string iface_name, string addr){
 ///
 	get_mac();	
 }
+
 void Node::Pcap_open(){
         char *errbuf = NULL;
         this->handle = pcap_open_live(this->iface.c_str(), BUFSIZ, 0, 1000, errbuf);
@@ -70,7 +66,6 @@ void Node::get_mac(){
 	int i=0;
 	int packet_length = 0;
         u_char dest_mac[] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };	// Broad cast
-        u_char sender_ip[] = { 192, 168, 86, 131 };		// Myip
         u_char target_mac[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
         u_char ether_type[] = { 0x08, 0x06 };           //ARP
         u_char Hardware_Type[] = { 0x00,0x01 };         //ETHERNET
@@ -113,7 +108,7 @@ void Node::get_mac(){
                 struct ether_arp *arp;
                 char buf[30];
                 char buf2[30];
-		pcap_sendpacket(this->handle, packet, 100);
+		pcap_sendpacket(this->handle, packet, i);
 		if(pcap_next_ex( this->handle, &header, &recv_packet ) != 1)
                         continue;
                 
