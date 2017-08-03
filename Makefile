@@ -15,5 +15,5 @@ spoof.o: spoof.cpp spoof.h
 send_arp.o: send_arp.h node.h send_arp.cpp
 
 clean:
-	rm -f send_arp
+	rm -f arp_spoof
 	rm -f *.o
