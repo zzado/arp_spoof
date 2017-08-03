@@ -23,22 +23,35 @@ Node::Node(string iface_name, string addr){
 	this->iface = iface_name;
 	this->ip_addr_str = addr;
 	inet_pton(AF_INET, addr.c_str() ,this->ip_addr);
-///
+/// Get my interface's mac
 	struct ifreq ifr;
 	ifr.ifr_addr.sa_family = AF_INET;
         int s = socket(AF_INET, SOCK_DGRAM, 0);
         strcpy(ifr.ifr_name, this->iface.c_str());
         ioctl(s, SIOCGIFHWADDR, &ifr);
 	memcpy(this->iface_mac_addr, ifr.ifr_hwaddr.sa_data, 6);        	
-
-
-/*
-	for(int i=0; i<6; i++)
-		printf("%.2X ", this->iface_mac_addr[i]);
-*/
+///
 	close(s);
-////	
-	
+// Get my interface's ip    	
+	pcap_if_t *alldevs;
+    	char * errbuf;
+	int status = pcap_findalldevs(&alldevs, errbuf);
+    	if(status != 0) {
+        	printf("%s\n", errbuf);
+    	}
+
+	for(pcap_if_t *d=alldevs; d!=NULL; d=d->next) {
+        	if(string(d->name) == this->iface){        
+			for(pcap_addr_t *a=d->addresses; a!=NULL; a=a->next) {
+            			if(a->addr->sa_family == AF_INET){
+                			inet_pton(AF_INET, inet_ntoa(((struct sockaddr_in*)a->addr)->sin_addr), this->iface_ip_addr);
+        			}
+			}
+
+    		}
+	}
+	pcap_freealldevs(alldevs);
+///
 	get_mac();	
 }
 void Node::Pcap_open(){
@@ -84,15 +97,13 @@ void Node::get_mac(){
         i += sizeof(Opcode);
 	memcpy(packet + i, this->iface_mac_addr, sizeof(this->mac_addr));	// sender_mac
         i += sizeof(this->mac_addr);
-	memcpy(packet + i, sender_ip, sizeof(sender_ip));
-        i += sizeof(sender_ip);
+	memcpy(packet + i, this->iface_ip_addr, sizeof(this->iface_ip_addr));
+        i += sizeof(iface_ip_addr);
 	memcpy(packet + i, target_mac, sizeof(target_mac));		//traget mac
         i += sizeof(target_mac);
 	memcpy(packet + i, this->ip_addr, sizeof(this->ip_addr));	//target ip
         i += sizeof(this->ip_addr);
 
-//        for(int i=0; i<100; i++)
-	//	pcap_sendpacket(this->handle, packet, 100);
 	int count = 0;
 	while( 1 ) {
 		const unsigned char *recv_packet = NULL;

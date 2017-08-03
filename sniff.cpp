@@ -82,11 +82,11 @@ void Sniff::start(){
 				packet += sizeof(struct ether_header);
                         	iph = (struct ip *)packet;
                         	packet -= sizeof(struct ether_header);
-	//			if(!memcmp(ip_addr, this->sender->ip_addr, 4)){
+				if(iph->ip_dst.s_addr == *(int *)this->sender->ip_addr){
 					memcpy(eth->ether_shost, this->sender->iface_mac_addr, 6);
 	                       		memcpy(eth->ether_dhost, this->sender->mac_addr, 6);
                 		        pcap_sendpacket(this->handle, packet, header->len);
-	//			}
+				}
 		
 			}
                 

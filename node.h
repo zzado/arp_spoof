@@ -12,7 +12,7 @@ class Node{
 		Node(string iface_name, string addr);
 		unsigned char ip_addr[4];
                 unsigned char iface_mac_addr[6];
-                
+		unsigned char iface_ip_addr[4];                
 	private:
 		void get_mac();
 		void Pcap_open();
