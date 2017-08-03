@@ -1,7 +1,6 @@
 #include <iostream>
 #include <pcap.h>
 #include "interface.h"
-#include "node.h"
 #include "sniff.h"
 #include <string>
 #include <stdio.h>
@@ -42,11 +41,10 @@ int main(int argc, char **argv){
 //	ift.send_arp(&sender, &target, 100);
 	//sleep(1000);
 	//status = 1;
+	unsigned char my_ip[4] = {192, 168, 86, 131};
+	Sniff sniff(iface, &sender, &target);
+	sniff.start();
 	infect.join();
-	infect2.join();
-	while(1){
+        infect2.join();
 
-	}
-//	Sniff sniff(iface);
-//	sniff.start();
 }
