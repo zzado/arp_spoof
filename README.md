@@ -1,9 +1,10 @@
 # arp_spoof
 
 ## arp_spoof
- * Send ARP packet to victim
- * Relay victim's packet to gateway
- * Relay gateway's packet to victim
+ * target(victim), sender(gateway)
+ * Send ARP packet to target
+ * Relay target's packet to sender
+ * Relay sender's packet to target
 ## send_arp
  * Send ARP packet to target
 ## pcap_test
