@@ -1,7 +1,10 @@
 # arp_spoof
 
 ## arp_spoof
- * Relay packet to victim
- * AAA
-### send_arp - Send arp packet to target
-### pcap_test - Capture Pakcet and classify
+ * Send ARP packet to victim
+ * Relay victim's packet to gateway
+ * Relay gateway's packet to victim
+## send_arp
+ * Send ARP packet to target
+## pcap_test
+ * Capture Pakcet and classify
