@@ -18,7 +18,7 @@ using namespace std;
 int main(int argc, char **argv){
 //	Interface iface;
 	if(argc != 4){
-		cout << "[*] Usage : ./pcap_test [interface] [sender ip] [target ip]" <<endl;
+		cout << "[*] Usage : ./send_arp [interface] [sender ip] [target ip]" <<endl;
 		exit(0);
 	}
 	string iface(argv[1]);
